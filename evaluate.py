@@ -11,7 +11,7 @@ from termcolor import colored
 
 from common.parser import parse_cfg
 from common.seed import set_seed
-from envs import make_env
+from envs import make_prey_env
 from tdmpc2 import TDMPC2
 
 torch.backends.cudnn.benchmark = True
@@ -39,22 +39,23 @@ def evaluate(cfg: dict):
 		$ python evaluate.py task=dog-run checkpoint=/path/to/dog-1.pt save_video=true
 	```
 	"""
-	assert torch.cuda.is_available()
-	assert cfg.eval_episodes > 0, 'Must evaluate at least 1 episode.'
+	# assert torch.cuda.is_available()
+	# assert cfg.eval_episodes > 0, 'Must evaluate at least 1 episode.'
 	cfg = parse_cfg(cfg)
-	set_seed(cfg.seed)
+	# set_seed(cfg.seed)
 	print(colored(f'Task: {cfg.task}', 'blue', attrs=['bold']))
 	print(colored(f'Model size: {cfg.model_size}', 'blue', attrs=['bold']))
-	print(colored(f'Checkpoint: {cfg.checkpoint}', 'blue', attrs=['bold']))
-	if not cfg.multitask and ('mt80' in cfg.checkpoint or 'mt30' in cfg.checkpoint):
-		print(colored('Warning: single-task evaluation of multi-task models is not currently supported.', 'red', attrs=['bold']))
-		print(colored('To evaluate a multi-task model, use task=mt80 or task=mt30.', 'red', attrs=['bold']))
+	# print(colored(f'Checkpoint: {cfg.checkpoint}', 'blue', attrs=['bold']))
+	# if not cfg.multitask and ('mt80' in cfg.checkpoint or 'mt30' in cfg.checkpoint):
+	# 	print(colored('Warning: single-task evaluation of multi-task models is not currently supported.', 'red', attrs=['bold']))
+	# 	print(colored('To evaluate a multi-task model, use task=mt80 or task=mt30.', 'red', attrs=['bold']))
 
 	# Make environment
-	env = make_env(cfg)
+	env = make_prey_env(cfg)
 
 	# Load agent
 	agent = TDMPC2(cfg)
+	print(os.getcwd())
 	assert os.path.exists(cfg.checkpoint), f'Checkpoint {cfg.checkpoint} not found! Must be a valid filepath.'
 	agent.load(cfg.checkpoint)
 	
@@ -79,6 +80,7 @@ def evaluate(cfg: dict):
 			while not done:
 				action = agent.act(obs, t0=t==0, task=task_idx)
 				obs, reward, done, info = env.step(action)
+				env.render()
 				ep_reward += reward
 				t += 1
 				if cfg.save_video:
@@ -97,6 +99,7 @@ def evaluate(cfg: dict):
 			f'\tS: {ep_successes:.02f}', 'yellow'))
 	if cfg.multitask:
 		print(colored(f'Normalized score: {np.mean(scores):.02f}', 'yellow', attrs=['bold']))
+
 
 
 if __name__ == '__main__':

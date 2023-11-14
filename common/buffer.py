@@ -71,7 +71,8 @@ class Buffer():
 
 	def _init(self, tds):
 		"""Initialize the replay buffer. Use the first episode to estimate storage requirements."""
-		mem_free, _ = torch.cuda.mem_get_info()
+		# mem_free, _ = torch.cuda.mem_get_info()
+		mem_free = 0
 		bytes_per_ep = sum([
 				(v.numel()*v.element_size() if not isinstance(v, TensorDict) \
 				else sum([x.numel()*x.element_size() for x in v.values()])) \

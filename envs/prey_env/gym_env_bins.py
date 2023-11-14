@@ -222,10 +222,7 @@ class Environment(Env):
             world_name = "%02i_%02i" % (random.randint(0, 10), e)
         else:
             world_name = "%02i_%02i" % (random.randint(11, 19), e)
-        #occlusions = Cell_group_builder.get_from_name("hexagonal", world_name, "occlusions")
-        #self.world.set_occlusions(occlusions)
         self.world = World.get_from_parameters_names("hexagonal", "canonical", world_name)
-        #self.model.world=self.world
         self.model = Model(pworld=self.world, freq=self.freq, real_time=self.real_time)
         self.goal_location = Location(1, .5)
         self.start_location = Location(0, .5)

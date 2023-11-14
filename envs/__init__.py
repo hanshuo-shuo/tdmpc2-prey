@@ -43,7 +43,7 @@ class MypreyWrapper(gym.Wrapper):
 		self.cfg = cfg
 
 	def step(self, action):
-		obs, reward, _, info = self.env.step(action.copy())
+		obs, reward, done, info = self.env.step(action.copy())
 		obs = obs.astype(np.float32)
 		return obs, reward, False, info
 

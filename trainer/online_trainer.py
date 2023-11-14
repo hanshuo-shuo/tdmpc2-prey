@@ -34,7 +34,7 @@ class OnlineTrainer(Trainer):
 			while not done:
 				action = self.agent.act(obs, t0=t==0, eval_mode=True)
 				obs, reward, done, info = self.env.step(action)
-				self.env.render()
+				# self.env.render()
 				ep_reward += reward
 				t += 1
 				if self.cfg.save_video:
